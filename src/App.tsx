@@ -20,7 +20,8 @@ function App() {
     javascript_disabled: false,
     last_update: null
   });
-  const [loading, setLoading] = useState(false);
+  const [jsToggleLoading, setJsToggleLoading] = useState(false);
+  const [scrapingLoading, setScrapingLoading] = useState(false);
 
   // Poll for status updates
   useEffect(() => {
@@ -42,7 +43,7 @@ function App() {
   }, []);
 
   const handleJavascriptToggle = async (checked: boolean) => {
-    setLoading(true);
+    setJsToggleLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/javascript`, {
         method: 'POST',
@@ -57,17 +58,21 @@ function App() {
         setJavascriptDisabled(checked);
       } else {
         alert(data.message || 'Failed to change JavaScript setting');
+        // Revert the checkbox if it failed
+        setJavascriptDisabled(!checked);
       }
     } catch (error) {
       console.error('Error toggling JavaScript:', error);
       alert('Failed to connect to backend. Make sure the Flask server is running.');
+      // Revert the checkbox if it failed
+      setJavascriptDisabled(!checked);
     } finally {
-      setLoading(false);
+      setJsToggleLoading(false);
     }
   };
 
   const handleStart = async () => {
-    setLoading(true);
+    setScrapingLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/start`, {
         method: 'POST',
@@ -84,12 +89,12 @@ function App() {
       console.error('Error starting scraping:', error);
       alert('Failed to connect to backend. Make sure the Flask server is running.');
     } finally {
-      setLoading(false);
+      setScrapingLoading(false);
     }
   };
 
   const handleStop = async () => {
-    setLoading(true);
+    setScrapingLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/stop`, {
         method: 'POST',
@@ -106,7 +111,7 @@ function App() {
       console.error('Error stopping scraping:', error);
       alert('Failed to connect to backend. Make sure the Flask server is running.');
     } finally {
-      setLoading(false);
+      setScrapingLoading(false);
     }
   };
 
@@ -162,22 +167,27 @@ function App() {
               <span className="text-sm text-gray-500">
                 (Similar to Chrome DevTools setting)
               </span>
+              {jsToggleLoading && (
+                <span className="text-xs text-blue-600 animate-pulse">Updating...</span>
+              )}
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className={`relative inline-flex items-center ${jsToggleLoading || status.running ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
               <input
                 type="checkbox"
                 id="javascript-toggle"
                 checked={javascriptDisabled}
                 onChange={(e) => handleJavascriptToggle(e.target.checked)}
-                disabled={loading || status.running}
+                disabled={jsToggleLoading || status.running}
                 className="sr-only peer"
               />
               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
           </div>
           <p className="mt-2 text-sm text-gray-500">
-            {javascriptDisabled
-              ? 'JavaScript is currently disabled in Chrome'
+            {jsToggleLoading
+              ? 'Updating JavaScript setting...'
+              : javascriptDisabled
+              ? 'JavaScript is currently disabled in Chrome (check DevTools Settings → Debugger → Disable JavaScript)'
               : 'JavaScript is currently enabled in Chrome'}
           </p>
         </div>
@@ -186,25 +196,25 @@ function App() {
         <div className="mb-8 flex space-x-4">
           <button
             onClick={handleStart}
-            disabled={loading || status.running}
+            disabled={scrapingLoading || status.running}
             className={`flex-1 py-3 px-6 rounded-lg font-semibold text-white transition-all ${
-              status.running || loading
+              status.running || scrapingLoading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 active:scale-95'
             }`}
           >
-            {loading ? 'Processing...' : 'Start Scraping'}
+            {scrapingLoading ? 'Processing...' : 'Start Scraping'}
           </button>
           <button
             onClick={handleStop}
-            disabled={loading || !status.running}
+            disabled={scrapingLoading || !status.running}
             className={`flex-1 py-3 px-6 rounded-lg font-semibold text-white transition-all ${
-              !status.running || loading
+              !status.running || scrapingLoading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-red-600 hover:bg-red-700 active:scale-95'
             }`}
           >
-            {loading ? 'Processing...' : 'Stop Scraping'}
+            {scrapingLoading ? 'Processing...' : 'Stop Scraping'}
           </button>
         </div>
 
