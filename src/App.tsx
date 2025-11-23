@@ -8,7 +8,6 @@ interface ScrapingStatus {
   last_update: number | null;
 }
 
-// API is served from UK-Scraping folder
 const API_BASE_URL = 'http://localhost:5000/api';
 
 function App() {
@@ -83,10 +82,10 @@ function App() {
 
       const data = await response.json();
       if (!data.success) {
-        alert(data.message || 'Failed to start scraping');
+        alert(data.message || 'Failed to start automation');
       }
     } catch (error) {
-      console.error('Error starting scraping:', error);
+      console.error('Error starting automation:', error);
       alert('Failed to connect to backend. Make sure the Flask server is running.');
     } finally {
       setScrapingLoading(false);
@@ -105,10 +104,10 @@ function App() {
 
       const data = await response.json();
       if (!data.success) {
-        alert(data.message || 'Failed to stop scraping');
+        alert(data.message || 'Failed to stop automation');
       }
     } catch (error) {
-      console.error('Error stopping scraping:', error);
+      console.error('Error stopping automation:', error);
       alert('Failed to connect to backend. Make sure the Flask server is running.');
     } finally {
       setScrapingLoading(false);
@@ -203,7 +202,7 @@ function App() {
                 : 'bg-green-600 hover:bg-green-700 active:scale-95'
             }`}
           >
-            {scrapingLoading ? 'Processing...' : 'Start Scraping'}
+            {scrapingLoading ? 'Processing...' : 'Start automation'}
           </button>
           <button
             onClick={handleStop}
@@ -214,7 +213,7 @@ function App() {
                 : 'bg-red-600 hover:bg-red-700 active:scale-95'
             }`}
           >
-            {scrapingLoading ? 'Processing...' : 'Stop Scraping'}
+            {scrapingLoading ? 'Processing...' : 'Stop automation'}
           </button>
         </div>
 
@@ -251,7 +250,7 @@ function App() {
           <ol className="list-decimal list-inside space-y-1 text-sm text-blue-700">
             <li>Start Chrome with remote debugging: <code className="bg-blue-100 px-1 rounded">--remote-debugging-port=9222</code></li>
             <li>Toggle JavaScript setting if needed</li>
-            <li>Click "Start Scraping" to begin the automation</li>
+            <li>Click "Start automation" to begin the automation</li>
             <li>Monitor the status below</li>
           </ol>
         </div>
