@@ -151,7 +151,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-          UK Scraping Control Panel
+          Business Booking Control Panel
         </h1>
 
         {/* JavaScript Toggle Section */}
