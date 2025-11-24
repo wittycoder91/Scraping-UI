@@ -12,6 +12,7 @@ const API_BASE_URL = 'http://localhost:5000/api';
 
 function App() {
   const [javascriptDisabled, setJavascriptDisabled] = useState(false);
+  const [testCenterLocation, setTestCenterLocation] = useState('Wood Green (London)');
   const [status, setStatus] = useState<ScrapingStatus>({
     running: false,
     status: 'idle',
@@ -71,6 +72,11 @@ function App() {
   };
 
   const handleStart = async () => {
+    if (!testCenterLocation.trim()) {
+      alert('Please enter a test center location');
+      return;
+    }
+
     setScrapingLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/start`, {
@@ -78,6 +84,9 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          location: testCenterLocation.trim()
+        }),
       });
 
       const data = await response.json();
@@ -152,6 +161,30 @@ function App() {
         <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
           Automation Control Panel
         </h1>
+
+        {/* Test Center Location Input Section */}
+        <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <label
+            htmlFor="test-center-location"
+            className="block text-lg font-medium text-gray-700 mb-2"
+          >
+            Test Center Location
+          </label>
+          <input
+            type="text"
+            id="test-center-location"
+            value={testCenterLocation}
+            onChange={(e) => setTestCenterLocation(e.target.value)}
+            disabled={status.running}
+            placeholder="Enter test center location (e.g., Wood Green (London))"
+            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              status.running ? 'bg-gray-200 cursor-not-allowed' : 'bg-white'
+            }`}
+          />
+          <p className="mt-2 text-sm text-gray-500">
+            Enter the test center location that will be used for booking automation
+          </p>
+        </div>
 
         {/* JavaScript Toggle Section */}
         <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
