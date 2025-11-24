@@ -186,7 +186,7 @@ function App() {
             {jsToggleLoading
               ? 'Updating JavaScript setting...'
               : javascriptDisabled
-              ? 'JavaScript is currently disabled in Chrome (check DevTools Settings → Debugger → Disable JavaScript)'
+              ? 'JavaScript is currently disabled in Chrome'
               : 'JavaScript is currently enabled in Chrome'}
           </p>
         </div>
